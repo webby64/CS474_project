@@ -31,8 +31,7 @@ stop_words = set(stopwords.words('english'))
 
 contractions = {
     "aren't": "are not", "can't": "cannot", "couldn't": "could not", "could've": "could have", "didn't": "did not",
-    "doesn't": "does not",
-    "don't": "do not", "hadn't": "had not", "hasn't": "has not", "haven't": "have not",
+    "doesn't": "does not", "don't": "do not", "hadn't": "had not", "hasn't": "has not", "haven't": "have not",
     "he'd": "he would", "he'll": "he will", "he's": "he is", "i'd": "I would",
     "i'd": "I had", "i'll": "I will", "i'm": "I am", "isn't": "is not", "would've": "would have",
     "it's": "it is", "it'll": "it will", "i've": "I have", "let's": "let us",
@@ -43,10 +42,9 @@ contractions = {
     "they've": "they have", "we'd": "we would", "we're": "we are", "weren't": "were not",
     "we've": "we have", "what'll": "what will", "what're": "what are", "what's": "what is",
     "what've": "what have", "where's": "where is", "who'd": "who would", "who'll": "who will",
-    "who're": "who are", "who's": "who is", "who've": "who have", "who'll": "who will",
-    "won't": "will not", "wouldn't": "would not", "you'd": "you would", "you'll": "you will",
-    "you're": "you are", "you've": "you have", "wasn't": "was not", "we'll": " will",
-    "didn't": "did not", "y'all": "you all", "y'all'd": "you all would", "y'all're": "you all are"
+    "who're": "who are", "who's": "who is", "who've": "who have", "won't": "will not", "wouldn't": "would not",
+    "you'd": "you would", "you'll": "you will", "you're": "you are", "you've": "you have", "wasn't": "was not",
+    "we'll": " will", "y'all": "you all", "y'all'd": "you all would", "y'all're": "you all are"
 }
 
 
@@ -60,7 +58,7 @@ def preprocess(text):
     text = re.sub(r'’', '\'', text)  # replace ’ with '
     text = re.sub(r's\'', '', text)  # clean s'
     text = re.sub(r'[£₹$€₩]', ' ', text)  # clean currency symbols
-    text = re.sub(r'[δ∫βωδσ∈∆≡απθ+*-=°^×√÷]', ' ', text)  # clean math symbols
+    text = re.sub(r'[δ∫βωσ∈∆≡απθ+*-=°^×√÷]', ' ', text)  # clean math symbols
     text = re.sub(r'[/(),!@"“”?.%_&#:;><{}~\[\]|…]', ' ', text)  # clean punctuation
     text = [contractions[word] if word in contractions else word for word in
             text.split()]  # change contractions to full forms
