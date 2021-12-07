@@ -10,9 +10,20 @@ from umap import UMAP
 from common import preprocess
 from ctfidf import CTFIDFVectorizer
 
+model = SentenceTransformer('all-roberta-large-v1')
+
 
 def embed_documents(data):
-    return SentenceTransformer('all-roberta-large-v1').encode(data[' body'].tolist(), show_progress_bar=True)
+    try:
+        with open('results/embeddings.pickle', 'rb') as f:
+            embeddings = pickle.load(f)
+    except FileNotFoundError:
+        embeddings = model.encode(data[' body'].tolist(), show_progress_bar=True)
+
+        with open('results/embeddings.pickle', 'wb') as f:
+            pickle.dump(embeddings, f)
+
+    return embeddings
 
 
 def cluster_topics(data, embeddings):
@@ -57,15 +68,7 @@ def get_data_year():
     except FileNotFoundError:
         data = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
 
-        try:
-            with open('results/embeddings.pickle', 'rb') as f:
-                embeddings = pickle.load(f)
-        except FileNotFoundError:
-            embeddings = embed_documents(data)
-
-            with open('results/embeddings.pickle', 'wb') as f:
-                pickle.dump(embeddings, f)
-
+        embeddings = embed_documents(data)
         cluster_topics(data, embeddings)
 
         data_year = {
