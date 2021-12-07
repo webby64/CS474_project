@@ -99,7 +99,7 @@ def extract_topics(data):
     return topic
 
 
-data_all = pd.concat(map(pd.read_json, glob("/gdrive/My Drive/CS474/data/*.json"))).reset_index(drop=True)
+data_all = pd.concat(map(pd.read_json, glob("data/*.json"))).reset_index(drop=True)
 
 embeddings = embed_documents(data_all)
 
