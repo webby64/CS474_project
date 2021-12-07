@@ -355,14 +355,7 @@ topics_year = {
 import json
 json.dumps({year: list(map(" ".join, topics_year[year].sort_values('count', ascending=False)['keyword'].tolist())) for year in [2015, 2016, 2017]})
 
-
-topics = [' '.join(topic) for topic in topics_year[2015]['keyword'][1:11]]
-
-for topic in topics:
-  query(topic)
-
-
-
+topics = [' '.join(topic) for topic in topics_year[2015]['keyword'][1:3]]
 
 corenlp_dir = './corenlp'
 stanza.install_corenlp(dir=corenlp_dir)
