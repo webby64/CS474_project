@@ -4,6 +4,7 @@ from functools import partial
 from glob import glob
 
 import dateutil
+import numpy as np
 import pandas as pd
 from hdbscan import HDBSCAN
 from sentence_transformers import SentenceTransformer
@@ -56,9 +57,26 @@ def cluster_topics(data, embeddings):
     data['prob'] = clusterer.probabilities_
 
 
-def rank_topics(data):
-    topics = data.groupby(['topic'], as_index=False).agg({' body': ' '.join})
-    topics['count'] = data.groupby(['topic']).count()['title'].tolist()
+def max_subset_sum(data, length):
+    return max([sum(data[i:i + length]) for i in range(len(data) - length)])
+
+
+def max_subset_sums_for_topics(data, topics, length):
+    max_subset_sums = []
+    for i, row in topics.iterrows():
+        count = np.zeros(366, dtype=np.int32)
+        for day in data[data.topic == row.topic].days:
+            count[day] += 1
+        max_subset_sums.append(max_subset_sum(count, length))
+    return max_subset_sums
+
+
+def rank_topics(data, length=30):
+    group = data.groupby('topic', as_index=False)
+    topics = group.agg({' body': ' '.join})
+    topics['max_subset_sum'] = max_subset_sums_for_topics(data, topics, length)
+    topics['count'] = group.count()[' body'].tolist()
+
     return topics
 
 
