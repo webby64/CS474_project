@@ -382,8 +382,8 @@ client.start()
 time.sleep(10)
 
 
-for topic in topics:
-  cluster_num = query(topic)[0]
+for issue in topics:
+  cluster_num = query(issue)[0]
   cluster_center = model.cluster_centers_[cluster_num]
   cluster_features_ind = [ind for ind in clusters.get_group(cluster_num)['sorted_id']]
   euclidean_dist = {}
