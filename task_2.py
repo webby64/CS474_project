@@ -1,37 +1,26 @@
-import pandas as pd
-import numpy as np
-import re, os, json
-import nltk
-import plotly.express as px
-import plotly.graph_objects as go
+import collections
+import json
+import os
+import re
+import time
+
 import matplotlib.pyplot as plt
-from wordcloud import WordCloud, STOPWORDS
-from nltk.stem import WordNetLemmatizer
-from nltk.stem import PorterStemmer
-from nltk.corpus import stopwords
+import nltk
+import numpy as np
+import pandas as pd
 import stanza
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+from sklearn.cluster import KMeans
+from sklearn.feature_extraction.text import TfidfVectorizer
+from stanza.server import CoreNLPClient
+from wordcloud import WordCloud, STOPWORDS
+
 from task_1 import get_topics_year
 
 corenlp_dir = './corenlp'
-
 os.environ["CORENLP_HOME"] = corenlp_dir
-
-from stanza.server import CoreNLPClient
-import time
-from glob import glob
-import collections
-from umap import UMAP
-from hdbscan import HDBSCAN
-
-
-import numpy as np
-import scipy.sparse as sp
-
-from sklearn.utils import check_array
-from sklearn.preprocessing import normalize
-from sklearn.feature_extraction.text import TfidfTransformer, TfidfVectorizer
-from sklearn.cluster import KMeans
-from sklearn.utils.validation import FLOAT_DTYPES, check_is_fitted
 
 nltk.download('wordnet')
 nltk.download('stopwords')
