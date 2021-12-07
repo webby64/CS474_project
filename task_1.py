@@ -16,6 +16,24 @@ from ctfidf import CTFIDFVectorizer
 model = SentenceTransformer('all-roberta-large-v1')
 
 
+def get_data():
+    try:
+        with open('results/data.pickle', 'rb') as f:
+            data = pickle.load(f)
+    except FileNotFoundError:
+        data = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
+        data = data.drop(columns=[' author', ' description', ' section'])
+        data['year'] = data[' time'].apply(lambda x: int(x.split('-')[0]))
+        data['days'] = data.apply(
+            lambda x: (dateutil.parser.isoparse(x[' time']).date() - datetime.date(x.year, 1, 1)).days,
+            axis=1)
+
+        with open('results/data.pickle', 'wb') as f:
+            pickle.dump(data, f)
+
+    return data
+
+
 def embed_documents(data):
     try:
         with open('results/embeddings.pickle', 'rb') as f:
@@ -67,24 +85,6 @@ def extract_topics_ctfidf(data):
     topics['keyword'] = keywords
 
     return topics
-
-
-def get_data():
-    try:
-        with open('results/data.pickle', 'rb') as f:
-            data = pickle.load(f)
-    except FileNotFoundError:
-        data = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
-        data = data.drop(columns=[' author', ' description', ' section'])
-        data['year'] = data[' time'].apply(lambda x: int(x.split('-')[0]))
-        data['days'] = data.apply(
-            lambda x: (dateutil.parser.isoparse(x[' time']).date() - datetime.date(x.year, 1, 1)).days,
-            axis=1)
-
-        with open('results/data.pickle', 'wb') as f:
-            pickle.dump(data, f)
-
-    return data
 
 
 def get_topics_year(data):
