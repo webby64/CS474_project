@@ -36,7 +36,7 @@ nltk.download('wordnet')
 nltk.download('stopwords')
 
 
-root = '../../'
+root = './'
 
 '''
 File structure
