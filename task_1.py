@@ -110,11 +110,11 @@ def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=Fa
         pass
 
 
-def get_topics_year(data):
+def get_topics_year(data, **kwargs):
     return {
-        2015: extract_topics(data[data.year == 2015], ctfidf=True),
-        2016: extract_topics(data[data.year == 2016], ctfidf=True),
-        2017: extract_topics(data[data.year == 2017], ctfidf=True),
+        2015: extract_topics(data[data.year == 2015], **kwargs),
+        2016: extract_topics(data[data.year == 2016], **kwargs),
+        2017: extract_topics(data[data.year == 2017], **kwargs),
     }
 
 
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     data = get_data()
     embeddings = embed_documents(data)
     cluster_topics(data, embeddings)
-    topics_year = get_topics_year(data)
+    topics_year = get_topics_year(data, ctfidf=True)
     for year in [2015, 2016, 2017]:
-        topics = list(map(' '.join, topics_year[year].sort_values('count', ascending=False)['keyword'].tolist()))
-        print(year, ':', ', '.join(topics))
+        print(year)
+        print('\n'.join(topics_year[year].keyword.head(10).apply(' '.join).apply(lambda x: '  ' + x)))
