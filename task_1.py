@@ -57,7 +57,14 @@ def get_data_year():
     except FileNotFoundError:
         data_all = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
 
-        embeddings = embed_documents(data_all)
+        try:
+            with open('results/embeddings.pickle', 'rb') as f:
+                embeddings = pickle.load(f)
+        except FileNotFoundError:
+            embeddings = embed_documents(data_all)
+
+            with open('results/embeddings.pickle', 'wb') as f:
+                pickle.dump(embeddings, f)
 
         cluster_topics(data_all, embeddings)
 
