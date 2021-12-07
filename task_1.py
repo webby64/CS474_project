@@ -1,5 +1,6 @@
 import datetime
 import pickle
+from functools import partial
 from glob import glob
 
 import dateutil
@@ -41,7 +42,7 @@ def extract_topics(data):
     topic = data.groupby(['topic'], as_index=False).agg({' body': ' '.join})
     topic['count'] = data.groupby(['topic']).count()['title'].tolist()
 
-    count_vectorizer = CountVectorizer(ngram_range=(1, 3), preprocessor=lambda x: preprocess(x, False))
+    count_vectorizer = CountVectorizer(ngram_range=(1, 3), preprocessor=partial(preprocess, stem_lemmatize=False))
     count = count_vectorizer.fit_transform(topic[' body'])
     words = count_vectorizer.get_feature_names_out()
 
