@@ -110,7 +110,18 @@ def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=Fa
         pass
 
 
-def get_topics_year(data, **kwargs):
+def get_topics_year(**kwargs):
+    try:
+        with open('results/data_clustered.pickle', 'rb') as f:
+            data = pickle.load(f)
+    except FileNotFoundError:
+        data = get_data()
+        embeddings = embed_documents(data)
+        cluster_topics(data, embeddings)
+
+        with open('results/data_clustered.pickle', 'wb') as f:
+            pickle.dump(data, f)
+
     return {
         2015: extract_topics(data[data.year == 2015], **kwargs),
         2016: extract_topics(data[data.year == 2016], **kwargs),
@@ -119,10 +130,7 @@ def get_topics_year(data, **kwargs):
 
 
 if __name__ == '__main__':
-    data = get_data()
-    embeddings = embed_documents(data)
-    cluster_topics(data, embeddings)
-    topics_year = get_topics_year(data, ctfidf=True)
+    topics_year = get_topics_year(ctfidf=True)
     for year in [2015, 2016, 2017]:
         print(year)
         print('\n'.join(topics_year[year].keyword.head(10).apply(' '.join).apply(lambda x: '  ' + x)))
