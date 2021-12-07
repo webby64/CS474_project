@@ -55,23 +55,23 @@ def get_data_year():
         with open('results/data_year.pickle', 'rb') as f:
             data_year = pickle.load(f)
     except FileNotFoundError:
-        data_all = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
+        data = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
 
         try:
             with open('results/embeddings.pickle', 'rb') as f:
                 embeddings = pickle.load(f)
         except FileNotFoundError:
-            embeddings = embed_documents(data_all)
+            embeddings = embed_documents(data)
 
             with open('results/embeddings.pickle', 'wb') as f:
                 pickle.dump(embeddings, f)
 
-        cluster_topics(data_all, embeddings)
+        cluster_topics(data, embeddings)
 
         data_year = {
-            2015: data_all[(data_all[' time'] > '2015-01-01') & (data_all[' time'] < '2016-01-01')],
-            2016: data_all[(data_all[' time'] > '2016-01-01') & (data_all[' time'] < '2017-01-01')],
-            2017: data_all[(data_all[' time'] > '2017-01-01') & (data_all[' time'] < '2018-01-01')],
+            2015: data[(data[' time'] > '2015-01-01') & (data[' time'] < '2016-01-01')],
+            2016: data[(data[' time'] > '2016-01-01') & (data[' time'] < '2017-01-01')],
+            2017: data[(data[' time'] > '2017-01-01') & (data[' time'] < '2018-01-01')],
         }
 
         with open('results/data_year.pickle', 'wb') as f:
