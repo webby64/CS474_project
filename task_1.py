@@ -1,13 +1,16 @@
-from sentence_transformers import SentenceTransformer
-from umap import UMAP
-from hdbscan import HDBSCAN
+import pickle
 import re
-import nltk
-from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import CountVectorizer
-from ctfidf import CTFIDFVectorizer
-import pandas as pd
 from glob import glob
+
+import nltk
+import pandas as pd
+from hdbscan import HDBSCAN
+from nltk.corpus import stopwords
+from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import CountVectorizer
+from umap import UMAP
+
+from ctfidf import CTFIDFVectorizer
 
 
 def embed_documents(data):
