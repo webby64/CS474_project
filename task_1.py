@@ -77,7 +77,7 @@ def rank_topics(data, length=30):
     topics['max_subset_sum'] = max_subset_sums_for_topics(data, topics, length)
     topics['count'] = group.count()[' body'].tolist()
 
-    return topics
+    return topics.sort_values('max_subset_sum', ascending=False)
 
 
 def extract_topics_ctfidf(data):
