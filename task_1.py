@@ -1,6 +1,8 @@
+import datetime
 import pickle
 from glob import glob
 
+import dateutil
 import pandas as pd
 from hdbscan import HDBSCAN
 from sentence_transformers import SentenceTransformer
@@ -61,39 +63,29 @@ def extract_topics(data):
     return topic
 
 
-def get_data_year():
+def get_data():
     try:
-        with open('results/data_year.pickle', 'rb') as f:
-            data_year = pickle.load(f)
+        with open('results/data.pickle', 'rb') as f:
+            data = pickle.load(f)
     except FileNotFoundError:
         data = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
+        data['year'] = data[' time'].apply(lambda x: int(x.split('-')[0]))
+        data['days'] = data.apply(
+            lambda x: (dateutil.parser.isoparse(x[' time']).date() - datetime.date(x.year, 1, 1)).days,
+            axis=1)
 
-        embeddings = embed_documents(data)
-        cluster_topics(data, embeddings)
-
-        data_year = {
-            2015: data[(data[' time'] > '2015-01-01') & (data[' time'] < '2016-01-01')],
-            2016: data[(data[' time'] > '2016-01-01') & (data[' time'] < '2017-01-01')],
-            2017: data[(data[' time'] > '2017-01-01') & (data[' time'] < '2018-01-01')],
-        }
-
-        with open('results/data_year.pickle', 'wb') as f:
-            pickle.dump(data_year, f)
-
-    return data_year
+    return data
 
 
-def get_topics_year():
+def get_topics_year(data):
     try:
         with open('results/topics_year.pickle', 'rb') as f:
             topics_year = pickle.load(f)
     except FileNotFoundError:
-        data_year = get_data_year()
-
         topics_year = {
-            2015: extract_topics(data_year[2015]),
-            2016: extract_topics(data_year[2016]),
-            2017: extract_topics(data_year[2017]),
+            2015: extract_topics(data[data.year == 2015]),
+            2016: extract_topics(data[data.year == 2016]),
+            2017: extract_topics(data[data.year == 2017]),
         }
 
         with open('results/topics_year.pickle', 'wb') as f:
@@ -103,7 +95,10 @@ def get_topics_year():
 
 
 if __name__ == '__main__':
-    topics_year = get_topics_year()
+    data = get_data()
+    embeddings = embed_documents(data)
+    cluster_topics(data, embeddings)
+    topics_year = get_topics_year(data)
     for year in [2015, 2016, 2017]:
         topics = list(map(' '.join, topics_year[year].sort_values('count', ascending=False)['keyword'].tolist()))
         print(year, ':', ', '.join(topics))
