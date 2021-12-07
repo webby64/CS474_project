@@ -38,18 +38,23 @@ def cluster_topics(data, embeddings):
     data['prob'] = clusterer.probabilities_
 
 
-def extract_topics(data):
-    topic = data.groupby(['topic'], as_index=False).agg({' body': ' '.join})
-    topic['count'] = data.groupby(['topic']).count()['title'].tolist()
+def rank_topics(data):
+    topics = data.groupby(['topic'], as_index=False).agg({' body': ' '.join})
+    topics['count'] = data.groupby(['topic']).count()['title'].tolist()
+    return topics
+
+
+def extract_topics_ctfidf(data):
+    topics = rank_topics(data)
 
     count_vectorizer = CountVectorizer(ngram_range=(1, 3), preprocessor=partial(preprocess, stem_lemmatize=False))
-    count = count_vectorizer.fit_transform(topic[' body'])
+    count = count_vectorizer.fit_transform(topics[' body'])
     words = count_vectorizer.get_feature_names_out()
 
     ctfidf = CTFIDFVectorizer().fit_transform(count, n_samples=data.shape[0]).toarray()
 
     keywords = []
-    for label in topic.index:
+    for label in topics.index:
         candidate = [words[index] for index in ctfidf[label].argsort()[-10:]]
         keyword = []
         for word in candidate:
@@ -59,9 +64,9 @@ def extract_topics(data):
             else:
                 keyword.append(word)
         keywords.append(keyword)
-    topic['keyword'] = keywords
+    topics['keyword'] = keywords
 
-    return topic
+    return topics
 
 
 def get_data():
@@ -84,9 +89,9 @@ def get_data():
 
 def get_topics_year(data):
     return {
-        2015: extract_topics(data[data.year == 2015]),
-        2016: extract_topics(data[data.year == 2016]),
-        2017: extract_topics(data[data.year == 2017]),
+        2015: extract_topics_ctfidf(data[data.year == 2015]),
+        2016: extract_topics_ctfidf(data[data.year == 2016]),
+        2017: extract_topics_ctfidf(data[data.year == 2017]),
     }
 
 
