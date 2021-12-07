@@ -133,3 +133,7 @@ except FileNotFoundError:
 
     with open('results/topics_year.pickle', 'wb') as f:
         pickle.dump(topics_year, f)
+
+for year in [2015, 2016, 2017]:
+    topics = list(map(' '.join, topics_year[year].sort_values('count', ascending=False)['keyword'].tolist()))
+    print(year, ':', ', '.join(topics))
