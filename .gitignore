@@ -1,1 +1,9 @@
+__pycache__/
+
 /.idea/
+/corenlp/
+
+/report/*
+!/report/report.tex
+!/report/ref.bib
+!/report/img/
