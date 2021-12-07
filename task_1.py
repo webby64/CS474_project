@@ -80,36 +80,40 @@ def rank_topics(data, length=30):
     return topics.sort_values('max_subset_sum', ascending=False)
 
 
-def extract_topics_ctfidf(data):
-    topics = rank_topics(data)
+def extract_topics(data, top=10, ctfidf=False):
+    topics = rank_topics(data).head(top)
 
     count_vectorizer = CountVectorizer(ngram_range=(1, 3), preprocessor=partial(preprocess, stem_lemmatize=False))
     count = count_vectorizer.fit_transform(topics[' body'])
     words = count_vectorizer.get_feature_names_out()
 
-    ctfidf = CTFIDFVectorizer().fit_transform(count, n_samples=data.shape[0]).toarray()
+    if ctfidf:
+        ctfidf = CTFIDFVectorizer().fit_transform(count, n_samples=data.shape[0]).toarray()
 
-    keywords = []
-    for label in topics.index:
-        candidate = [words[index] for index in ctfidf[label].argsort()[-10:]]
-        keyword = []
-        for word in candidate:
-            for target in candidate:
-                if word in target and word != target:
-                    break
-            else:
-                keyword.append(word)
-        keywords.append(keyword)
-    topics['keyword'] = keywords
+        keywords = []
+        for label in topics.index:
+            candidate = [words[index] for index in ctfidf[label].argsort()[-10:]]
+            keyword = []
+            for word in candidate:
+                for target in candidate:
+                    if word in target and word != target:
+                        break
+                else:
+                    keyword.append(word)
+            keywords.append(keyword)
+        topics['keyword'] = keywords
 
-    return topics
+        return topics
+    else:
+        # TODO: roberta based
+        pass
 
 
 def get_topics_year(data):
     return {
-        2015: extract_topics_ctfidf(data[data.year == 2015]),
-        2016: extract_topics_ctfidf(data[data.year == 2016]),
-        2017: extract_topics_ctfidf(data[data.year == 2017]),
+        2015: extract_topics(data[data.year == 2015], ctfidf=True),
+        2016: extract_topics(data[data.year == 2016], ctfidf=True),
+        2017: extract_topics(data[data.year == 2017], ctfidf=True),
     }
 
 
