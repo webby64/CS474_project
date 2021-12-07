@@ -100,38 +100,50 @@ def extract_topics(data):
     return topic
 
 
-try:
-    with open('results/data_year.pickle', 'rb') as f:
-        data_year = pickle.load(f)
-except FileNotFoundError:
-    data_all = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
+def get_data_year():
+    try:
+        with open('results/data_year.pickle', 'rb') as f:
+            data_year = pickle.load(f)
+    except FileNotFoundError:
+        data_all = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
 
-    embeddings = embed_documents(data_all)
+        embeddings = embed_documents(data_all)
 
-    cluster_topics(data_all, embeddings)
+        cluster_topics(data_all, embeddings)
 
-    data_year = {
-        2015: data_all[(data_all[' time'] > '2015-01-01') & (data_all[' time'] < '2016-01-01')],
-        2016: data_all[(data_all[' time'] > '2016-01-01') & (data_all[' time'] < '2017-01-01')],
-        2017: data_all[(data_all[' time'] > '2017-01-01') & (data_all[' time'] < '2018-01-01')],
-    }
+        data_year = {
+            2015: data_all[(data_all[' time'] > '2015-01-01') & (data_all[' time'] < '2016-01-01')],
+            2016: data_all[(data_all[' time'] > '2016-01-01') & (data_all[' time'] < '2017-01-01')],
+            2017: data_all[(data_all[' time'] > '2017-01-01') & (data_all[' time'] < '2018-01-01')],
+        }
 
-    with open('results/data_year.pickle', 'wb') as f:
-        pickle.dump(data_year, f)
+        with open('results/data_year.pickle', 'wb') as f:
+            pickle.dump(data_year, f)
 
-try:
-    with open('results/topics_year.pickle', 'rb') as f:
-        topics_year = pickle.load(f)
-except FileNotFoundError:
-    topics_year = {
-        2015: extract_topics(data_year[2015]),
-        2016: extract_topics(data_year[2016]),
-        2017: extract_topics(data_year[2017]),
-    }
+    return data_year
 
-    with open('results/topics_year.pickle', 'wb') as f:
-        pickle.dump(topics_year, f)
 
-for year in [2015, 2016, 2017]:
-    topics = list(map(' '.join, topics_year[year].sort_values('count', ascending=False)['keyword'].tolist()))
-    print(year, ':', ', '.join(topics))
+def get_topics_year():
+    try:
+        with open('results/topics_year.pickle', 'rb') as f:
+            topics_year = pickle.load(f)
+    except FileNotFoundError:
+        data_year = get_data_year()
+
+        topics_year = {
+            2015: extract_topics(data_year[2015]),
+            2016: extract_topics(data_year[2016]),
+            2017: extract_topics(data_year[2017]),
+        }
+
+        with open('results/topics_year.pickle', 'wb') as f:
+            pickle.dump(topics_year, f)
+
+    return topics_year
+
+
+if __name__ == '__main__':
+    topics_year = get_topics_year()
+    for year in [2015, 2016, 2017]:
+        topics = list(map(' '.join, topics_year[year].sort_values('count', ascending=False)['keyword'].tolist()))
+        print(year, ':', ', '.join(topics))
