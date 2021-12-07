@@ -69,6 +69,7 @@ def get_data():
             data = pickle.load(f)
     except FileNotFoundError:
         data = pd.concat(map(pd.read_json, glob('data/*.json'))).reset_index(drop=True)
+        data = data.drop(columns=[' author', ' description', ' section'])
         data['year'] = data[' time'].apply(lambda x: int(x.split('-')[0]))
         data['days'] = data.apply(
             lambda x: (dateutil.parser.isoparse(x[' time']).date() - datetime.date(x.year, 1, 1)).days,
@@ -81,20 +82,11 @@ def get_data():
 
 
 def get_topics_year(data):
-    try:
-        with open('results/topics_year.pickle', 'rb') as f:
-            topics_year = pickle.load(f)
-    except FileNotFoundError:
-        topics_year = {
-            2015: extract_topics(data[data.year == 2015]),
-            2016: extract_topics(data[data.year == 2016]),
-            2017: extract_topics(data[data.year == 2017]),
-        }
-
-        with open('results/topics_year.pickle', 'wb') as f:
-            pickle.dump(topics_year, f)
-
-    return topics_year
+    return {
+        2015: extract_topics(data[data.year == 2015]),
+        2016: extract_topics(data[data.year == 2016]),
+        2017: extract_topics(data[data.year == 2017]),
+    }
 
 
 if __name__ == '__main__':
