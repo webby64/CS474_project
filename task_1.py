@@ -74,6 +74,9 @@ def get_data():
             lambda x: (dateutil.parser.isoparse(x[' time']).date() - datetime.date(x.year, 1, 1)).days,
             axis=1)
 
+        with open('results/data.pickle', 'wb') as f:
+            pickle.dump(data, f)
+
     return data
 
 
