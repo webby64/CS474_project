@@ -101,7 +101,7 @@ def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=Fa
                         break
                 else:
                     keyword.append(word)
-            keywords.append(keyword)
+            keywords.append(' '.join(keyword))
         topics['keyword'] = keywords
 
         return topics[topics.topic != -1].sort_values(criteria, ascending=False).head(top)
@@ -133,4 +133,4 @@ if __name__ == '__main__':
     topics_year = get_topics_year(ctfidf=True)
     for year in [2015, 2016, 2017]:
         print(year)
-        print('\n'.join(topics_year[year].keyword.head(10).apply(' '.join).apply(lambda x: '  ' + x)))
+        print('\n'.join(topics_year[year].keyword.head(10).apply(lambda x: '  ' + x)))
