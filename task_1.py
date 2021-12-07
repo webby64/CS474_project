@@ -71,17 +71,18 @@ def max_subset_sums_for_topics(data, topics, length):
     return max_subset_sums
 
 
-def rank_topics(data, length=30):
+def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=False):
     group = data.groupby('topic', as_index=False)
     topics = group.agg({' body': ' '.join})
-    topics['max_subset_sum'] = max_subset_sums_for_topics(data, topics, length)
-    topics['count'] = group.count()[' body'].tolist()
 
-    return topics.sort_values('max_subset_sum', ascending=False)
+    if criteria == 'count':
+        topics['count'] = group.count()[' body'].tolist()
+    else:
+        criteria = 'max_subset_sum'
+        topics['max_subset_sum'] = max_subset_sums_for_topics(data, topics, length)
 
-
-def extract_topics(data, top=10, ctfidf=False):
-    topics = rank_topics(data) if ctfidf else rank_topics(data).head(top)
+    if not ctfidf:
+        topics = topics.head(top)
 
     count_vectorizer = CountVectorizer(ngram_range=(1, 3), preprocessor=partial(preprocess, stem_lemmatize=False))
     count = count_vectorizer.fit_transform(topics[' body'])
@@ -103,7 +104,7 @@ def extract_topics(data, top=10, ctfidf=False):
             keywords.append(keyword)
         topics['keyword'] = keywords
 
-        return topics.head(top)
+        return topics[topics.topic != -1].sort_values(criteria, ascending=False).head(top)
     else:
         # TODO: roberta based
         pass
