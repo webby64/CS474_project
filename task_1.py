@@ -81,7 +81,7 @@ def rank_topics(data, length=30):
 
 
 def extract_topics(data, top=10, ctfidf=False):
-    topics = rank_topics(data).head(top)
+    topics = rank_topics(data) if ctfidf else rank_topics(data).head(top)
 
     count_vectorizer = CountVectorizer(ngram_range=(1, 3), preprocessor=partial(preprocess, stem_lemmatize=False))
     count = count_vectorizer.fit_transform(topics[' body'])
@@ -103,7 +103,7 @@ def extract_topics(data, top=10, ctfidf=False):
             keywords.append(keyword)
         topics['keyword'] = keywords
 
-        return topics
+        return topics.head(top)
     else:
         # TODO: roberta based
         pass
