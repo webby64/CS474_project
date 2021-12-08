@@ -9,6 +9,7 @@ import pandas as pd
 from hdbscan import HDBSCAN
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from umap import UMAP
 
 from common import preprocess
@@ -82,7 +83,7 @@ def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=Fa
         topics['max_subset_sum'] = max_subset_sums_for_topics(data, topics, length)
 
     if not ctfidf:
-        topics = topics.head(top)
+        topics = topics[topics.topic != -1].sort_values(criteria, ascending=False).head(top)
 
     count_vectorizer = CountVectorizer(ngram_range=(1, 3), preprocessor=partial(preprocess, stem_lemmatize=False))
     count = count_vectorizer.fit_transform(topics[' body'])
@@ -106,8 +107,21 @@ def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=Fa
 
         return topics[topics.topic != -1].sort_values(criteria, ascending=False).head(top)
     else:
-        # TODO: roberta based
-        pass
+        doc_embeddings = model.encode(topics[' body'], show_progress_bar=True)
+        word_embeddings = model.encode(words, show_progress_bar=True)
+
+        keywords = []
+        for index, doc in enumerate(topics[' body']):
+            doc_words = [words[i] for i in count[index].nonzero()[1]]
+
+            if doc_words:
+                doc_word_embeddings = np.array([word_embeddings[i] for i in count[index].nonzero()[1]])
+                distances = cosine_similarity([doc_embeddings[index]], doc_word_embeddings)[0]
+                doc_keywords = [(doc_words[i], round(float(distances[i]), 4)) for i in distances.argsort()[-10:]]
+                keywords.append(doc_keywords)
+
+        topics['keyword'] = keywords
+        return topics
 
 
 def get_topics_year(**kwargs):
