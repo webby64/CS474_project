@@ -26,7 +26,11 @@ root = './'
 File structure
 
 Text Mining
-    |--TM.ipynb
+    |--report
+    |   |--task_1.py
+    |   |--task_2.py
+    |   |--task_3.py
+    |
     |--data
         |--koreaherald_1517_0.json
         |--koreaherald_1517_1.json
