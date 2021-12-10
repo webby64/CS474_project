@@ -140,6 +140,7 @@ def get_topics_year(**kwargs):
         2015: extract_topics(data[data.year == 2015], **kwargs),
         2016: extract_topics(data[data.year == 2016], **kwargs),
         2017: extract_topics(data[data.year == 2017], **kwargs),
+        'all': extract_topics(data[data.year.isin([2015, 2016, 2017])], **kwargs)
     }
 
 

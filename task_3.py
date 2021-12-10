@@ -18,6 +18,7 @@ from easydict import EasyDict as edict
 from sklearn.decomposition import TruncatedSVD
 from sentence_transformers import SentenceTransformer
 from umap import UMAP
+from task_1 import get_topics_year
 nltk.download('stopwords')
 
 
@@ -134,9 +135,6 @@ class Preprocess():
         return merged_data
 
 
-process = Preprocess()
-all_articles = process.go_clean()
-
 
 class TopicModel():
     def __init__(self, all, years=[2015, 2016, 2017]):
@@ -156,10 +154,6 @@ class TopicModel():
         return self.topic_model.visualize_barchart()
 
 
-topics = TopicModel(all_articles, years=[2015, 2016, 2017])
-top_10 = topics.topic_top(10)
-topics.topic_visualize()
-
 
 args = edict()
 args.reduceTo = 5   #vector dimension after reduction
@@ -170,9 +164,7 @@ args.how_many_docs = 20   #how many docs within a cluster to look at to find the
 args.how_many_related = 3 #how many related issues to print per issue
 args.cluster_freq = 0 #cluster freq is in desceding order, so most frequent will have index 0. Change this number to start from other clusters
 args.neighbouring_cluster = 1 # 1(immediate neighbour) - args.clusters-1(furthest)
-top_issues = [[a[0] for a in x] for x in list(top_10.values())] #[a[0] for x in list(top_10.values()) for a in x]
-
-
+args.top_issues = 5
 
 
 class Wrapper():
@@ -262,7 +254,7 @@ class Wrapper():
         print("*"*100)
         print()
 
-        for issue_num in range(5): #len(top_issues)
+        for issue_num in range(args.top_issues): #len(top_issues)
             closest_similarity_indices = np.argsort(x[:, issue_num])
             
             closest_clusters = []   # label of doc clusters of the top most closest docs to the issue 
@@ -329,5 +321,10 @@ class Wrapper():
 
 
 
+process = Preprocess()
+topics = get_topics_year() #TopicModel(all_articles, years=[2015, 2016, 2017])
 go = Wrapper()
+
+all_articles = process.go_clean()
+top_issues = topics["all"]["keyword"][1:]   #[[a[0] for a in x] for x in list(topics.topic_top(10).values())] #[a[0] for x in list(top_10.values()) for a in x]
 go.cluster(all_articles, top_issues, reduce=True, method="umap", vectorizer="mpnet")
