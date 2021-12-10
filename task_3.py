@@ -164,7 +164,7 @@ args.how_many_docs = 20   #how many docs within a cluster to look at to find the
 args.how_many_related = 3 #how many related issues to print per issue
 args.cluster_freq = 0 #cluster freq is in desceding order, so most frequent will have index 0. Change this number to start from other clusters
 args.neighbouring_cluster = 1 # 1(immediate neighbour) - args.clusters-1(furthest)
-args.top_issues = 5
+args.top_issues = 5 #how many top issues do you want to consider
 
 
 class Wrapper():
