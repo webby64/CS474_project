@@ -5,5 +5,9 @@ __pycache__/
 
 /report/*
 !/report/report.tex
-!/report/ref.bib
-!/report/img/
+
+/design/*
+!/design/design.tex
+
+!ref.bib
+!img/
