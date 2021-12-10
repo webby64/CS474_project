@@ -146,5 +146,5 @@ def get_topics_year(**kwargs):
 if __name__ == '__main__':
     topics_year = get_topics_year(ctfidf=True)
     for year in [2015, 2016, 2017]:
-        print(year)
-        print('\n'.join(topics_year[year].keyword.apply(lambda x: '  ' + x)))
+        print(year, ':')
+        print('\n'.join(topics_year[year].keyword.apply(lambda x: '  ' + x + ',')))
