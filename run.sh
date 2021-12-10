@@ -10,6 +10,6 @@ fi
 
 
 # Run tasks
-python task_1.py 
-python task_2.py
-python task_3.py
+python task_1.py 2>/dev/null
+python task_2.py 2>/dev/null
+python task_3.py 2>/dev/null
