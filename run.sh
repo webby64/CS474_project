@@ -1,7 +1,15 @@
- #! /bin/sh
- chmod 775 task_1.py task_2.py task_3.py
+#!/bin/sh
+if [ -d venv ]
+then
+    . ./venv/bin/activate
+else
+    python3 -m venv venv
+    . ./venv/bin/activate
+    pip install -r requirements.txt
+fi
 
- # Run scirpts
- python3 task_1.py 
- python3 task_2.py
- python3 task_3.py
+
+# Run tasks
+python task_1.py 
+python task_2.py
+python task_3.py
