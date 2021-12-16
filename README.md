@@ -8,7 +8,9 @@ We implemented k-means, DBSCAN clustering techniques, document level relation ex
 
 Make sure you've installed `python --version > 3.5` and `java`.
 
-    sudo apt install default-jre #to install Java Runtime Environment from OpenJDK 11
+To install Java Runtime Environment from OpenJDK 11
+
+    sudo apt install default-jre 
     
 To run the codes, you need to install the dependencies first.
     pip install -r requirements.txt
