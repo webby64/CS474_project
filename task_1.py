@@ -107,7 +107,7 @@ def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=Fa
 
         return topics[topics.topic != -1].sort_values(criteria, ascending=False).head(top)
     else:
-        doc_embeddings = model.encode(topics[' body'], show_progress_bar=True)
+        doc_embeddings = model.encode(topics[' body'].tolist(), show_progress_bar=True)
         word_embeddings = model.encode(words, show_progress_bar=True)
 
         keywords = []
