@@ -72,7 +72,7 @@ def max_subset_sums_for_topics(data, topics, length):
     return max_subset_sums
 
 
-def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=False):
+def extract_topics(data, top=10, criteria='max_subset_sum', length=30, ctfidf=True):
     group = data.groupby('topic', as_index=False)
     topics = group.agg({' body': ' '.join})
 
