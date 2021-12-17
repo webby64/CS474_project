@@ -81,9 +81,9 @@ class Preprocess():
         for word in text:
             if word=="u.s.":
                 word="us"
-            if word=="graphic" or word=="news":
+            if word=="graphic" or word=="news" or word=="said":
                 continue
-        temp.append(word)
+            temp.append(word)
         text = " ".join(temp)
         text = re.sub(r'[.]', '', text)
         text = [self.contractions[word] if word in self.contractions else word for word in text.split()]  # change contractions to full forms
@@ -320,11 +320,12 @@ class Wrapper():
             print("\n")
 
 
+if __name__ == '__main__':
+    process = Preprocess()
+    all_articles = process.go_clean()
 
-process = Preprocess()
-topics = get_topics_year() #TopicModel(all_articles, years=[2015, 2016, 2017])
-go = Wrapper()
-
-all_articles = process.go_clean()
-top_issues = topics["all"]["keyword"][1:]   #[[a[0] for a in x] for x in list(topics.topic_top(10).values())] #[a[0] for x in list(top_10.values()) for a in x]
-go.cluster(all_articles, top_issues, reduce=True, method="umap", vectorizer="mpnet")
+    topics = get_topics_year() #TopicModel(all_articles, years=[2015, 2016, 2017])
+    top_issues = [topics["all"].keyword.iloc[i].split() for i in range(1, 10)]  #[[a[0] for a in x] for x in list(topics.topic_top(10).values())]
+    
+    go = Wrapper()
+    go.cluster(all_articles, top_issues, reduce=True, method="umap", vectorizer="mpnet")

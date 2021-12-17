@@ -9,11 +9,13 @@ cymem==2.0.6
 Cython==0.29.25
 easydict==1.9
 emoji==1.6.1
+en-core-web-lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.2.0/en_core_web_lg-3.2.0-py3-none-any.whl
 filelock==3.4.0
 fonttools==4.28.3
 hdbscan==0.8.27
 huggingface-hub==0.2.1
 idna==3.3
+importlib-metadata==4.8.2
 Jinja2==3.0.3
 joblib==1.1.0
 kiwisolver==1.3.2
@@ -64,8 +66,9 @@ torchvision==0.11.1
 tqdm==4.62.3
 transformers==4.13.0
 typer==0.4.0
-typing_extensions==3.10.0.0
+typing-extensions==3.10.0.0
 umap-learn==0.5.2
 urllib3==1.26.7
 wasabi==0.9.0
 wordcloud==1.8.1
+zipp==3.6.0
